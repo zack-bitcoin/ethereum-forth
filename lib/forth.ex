@@ -27,18 +27,15 @@ defmodule Forth do
 		end
 	end
 	def inside(text, left, right) do outside(skip_till(text, left), right, left) end
-	def test do
+	def words_code(file) do
 		{:ok, text} = File.read "test.fs"
-		IO.puts inspect text
-		text=outside(text, "\\", "\n")
-		IO.puts inspect text
-		String.replace(text, ";", "\\;")
-		text=outside(text, "(", ")")
-		IO.puts inspect text
-		words=inside(text, ":", ";")
-		IO.puts "words: #{inspect words}"
-		String.split(words, "\\")
-		IO.puts "words: #{inspect words}"
+		text = text |> outside("\\", "\n") |> String.replace(";", "\\;") |> outside("(", ")")
+		words = text |> inside(":", ";") |> String.split("\\") |> Enum.filter(&(&1!=""))
+		code = text |> outside(":", ";") |> String.replace("\n", " ")
+		{words, code}
+	end
+	def test_words_code do
+		IO.puts inspect words_code("test.fs")
 	end
 	def test_out_in do
 		{:ok, text} = File.read "test.fs"

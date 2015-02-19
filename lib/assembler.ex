@@ -143,15 +143,15 @@ defmodule Assembler do
 				end
 		end
 	end
-	def log32(x) do 
+	def log256(x) do 
 	cond do
-		x>0 -> :math.log(x)/:math.log(32) 
+		x>0 -> :math.log(x)/:math.log(256) 
 		true -> 0
 		end
 	end
 	def intsize(i) do#this math allows us to store small numbers in small numbers of bytes, instead of needing 32 bytes for each number.
 		i=String.to_integer(to_string(i))
-		trunc(log32(i))+1 
+		trunc(log256(i))+1 
 	end
 	def op2hex(op) do 
 		op=upcase(op)

@@ -1,0 +1,7 @@
+
+
+	2 3 a plus jumpdest a stop
+	jumpdest plus add jump
+	jumpdest minus sub jump
+	jumpdest times mul jump
+

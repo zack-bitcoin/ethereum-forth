@@ -1,0 +1,1 @@
+: start dup1 1 GT death jumpi swap2 dup1 swap2 add swap2 1 swap1 sub start ;
