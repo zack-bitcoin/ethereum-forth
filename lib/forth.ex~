@@ -1,6 +1,0 @@
-defmodule Forth do
-	#use \for comments
-	def test do
-		{:ok, text} = File.read "test.fs"
-	end
-end
