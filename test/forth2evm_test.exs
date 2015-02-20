@@ -1,4 +1,4 @@
-defmodule ExampleTest do
+defmodule Forth2evmTest do
   use ExUnit.Case
 
   test "the truth" do

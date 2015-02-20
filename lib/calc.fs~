@@ -1,5 +1,10 @@
+/ 2 3 square square square square plus stop jumpdest death 0 0 log2
+2 3 0 0 log2
+
+: square ( a -- a*a ) dup1 mul ;
 : plus ( a b -- a+b ) add ;
 : minus ( a b -- a-b ) sub ;
 : times ( a b -- a*b ) mul ;
+: fib ( n -- f ) 0 0 fibby ;
+: fibby ( n a b -- n-1 b a+b) dup1 swap2 add swap2 1 sub dup1 0 LT death jumpi swap2 fibby ; 
 
-2 3 plus 5 minus 10 times

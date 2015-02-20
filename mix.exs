@@ -1,16 +1,17 @@
-defmodule Assembler.Mixfile do
+defmodule Forth2evm.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :assembler,
+    [app: :forth2evm,
      version: "0.0.1",
      elixir: "~> 1.0",
 		 escript: escript,
      deps: deps]
   end
   def escript do
-    [main_module: Assembler]
+    [main_module: Forth2EVM]
   end
+
 
   # Configuration for the OTP application
   #

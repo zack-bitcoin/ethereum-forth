@@ -1,4 +1,4 @@
-Ethereum Forth
+Forth2evm
 =========
 
-Forth like language on top of ethereum EVM
+** TODO: Add description **
