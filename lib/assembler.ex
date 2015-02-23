@@ -1,12 +1,17 @@
 defmodule Assembler do
 	def opcodes do
 		[STOP: 0x00, 
-		 ADD: 0x01, 
+		 ADD: 0x01,
+		 "+": 0x01,
 		 MUL: 0x02,
+		 "*": 0x02,
 		 SUB: 0x03,
+		 "-": 0x03,
 		 DIV: 0x04,
+		 "/": 0x04,
 		 SDIV: 0x05,
 		 MOD: 0x06,
+		 "%": 0x06,
 		 SMOD: 0x07,
 		 ADDMOD: 0x08,
 		 MULMOD: 0x09,
@@ -18,6 +23,7 @@ defmodule Assembler do
 		 SGT: 0x13,
 		 EQ: 0x14,
 		 ISZERO: 0x15,
+		 "IF": 0x15,
 		 AND: 0x16,
 		 OR: 0x17,
 		 XOR: 0x18,
@@ -87,6 +93,7 @@ defmodule Assembler do
 		 PUSH30: 0x7d,
 		 PUSH31: 0x7e,
 		 PUSH32: 0x7f,
+		 DUP: 0x80,
 		 DUP1: 0x80,
 		 DUP2: 0x81,
 		 DUP3: 0x82,
@@ -189,19 +196,46 @@ defmodule Assembler do
 			true -> [out|hex2ops(b)]
 		end
 	end
-	def jumpdests(l, counter \\ 0) do
+	def jumpdests(l) do
+		names=jumpdests_names(l)
+		IO.puts "jumpdest names: #{inspect names}"
+		names=Enum.map(names, &({&1, 1}))
+		IO.puts "jumpdest names: #{inspect names}"
+		names=jumpdests_counter(l, names, 0)
+		IO.puts "jumpdest names: #{inspect names}"
+		names=jumpdests_counter(l, names, 0)
+		IO.puts "jumpdest names: #{inspect names}"
+		names=jumpdests_counter(l, names, 0)
+		IO.puts "jumpdest names: #{inspect names}"
+		names
+	end
+	def jumpdests_names(l) do
 		cond do 
 			l==[] -> []
 			upcase(hd(l))==:JUMPDEST ->
-				[{hd(tl(l)), counter}|jumpdests(tl(tl(l)), counter+1)]
+				[hd(tl(l))|jumpdests_names(tl(tl(l)))]
+			true ->	
+				jumpdests_names(tl(l))
+		end
+	end
+	def jumpdests_counter(l, names, counter) do
+		cond do 
+			l==[] -> names
+			hd(l)==:JUMPDEST ->
+				names=Dict.put(names, hd(tl(l)), counter)
+				jumpdests_counter(tl(tl(l)), names, counter+1)
 			is_string_int(to_string(hd(l))) ->
 				i=String.to_integer(to_string(hd(l)))				
 				digits=intsize(i)
-				jumpdests(tl(l), counter+1+digits)
+				jumpdests_counter(tl(l), names, counter+1+digits)
 			hd(l) in Dict.keys(opcodes) -> 				
-				jumpdests(tl(l), counter+1)
+				jumpdests_counter(tl(l), names, counter+1)
+			hd(l) in Dict.keys(names) -> 
+				k=hd(l)
+				b=Dict.get(names, k)
+				jumpdests_counter(tl(l), names, counter+intsize(b)+1)
 			true ->	
-				jumpdests(tl(l), counter+2)
+				jumpdests_counter(tl(l), names, counter+2)
 		end
 	end
 	def filter_jumpdest(code) do
@@ -223,6 +257,8 @@ defmodule Assembler do
 		j=jumpdests(l) #[name: location, name: location]
 		names=Enum.map(j, &(elem(&1, 0)))
 		l=filter_jumpdest(l)
+		#IO.puts "before replacejunk #{inspect l}"
+		#IO.puts "before replacejunk #{inspect j}"
 		replace_junk(l, j)
 	end
 	def p_nibble(0) do "0" end
